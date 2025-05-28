@@ -28,7 +28,7 @@ app.use('/auth', authRouter);
 app.use('/players', playerRouter);
 app.use('/teams', teamRouter);
 app.use('/users', userRouter);
-app.use('/auth-jwt', testJwtRouter);
+app.use('/test-jwt', testJwtRouter);
 
 
 

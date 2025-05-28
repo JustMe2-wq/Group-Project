@@ -21,7 +21,8 @@ const TeamForm = (props) => {
             props.handleUpdateTeam(formData, props.selected._id);
         } else {
             props.handleAddTeam(formData);
-        }
+        } 
+        setFormData(initialState);
     }
 
     return (
@@ -49,7 +50,7 @@ const TeamForm = (props) => {
                     id="inPlayoff"
                     name="inPlayoff"
                     checked={formData.inPlayoff}
-                    onChange={(e) => setFormData({ ...formData, inPlayoff: e.target.checked })}
+                    onChange={(e) => setFormData({ ...formData, inPlayoff: e.target.checked})} 
                 />
                 <button type="submit">{props.selected ? 'Update Team' : 'Add Team'}</button>
             </form>

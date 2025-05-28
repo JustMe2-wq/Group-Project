@@ -1,0 +1,31 @@
+nav {
+  background: #890057;
+  padding: 1rem 2rem;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+nav a {
+  color: #ffffff;
+}
+
+nav a:hover {
+  color: #fff;
+}
+
+nav li:first-child {
+  margin-right: auto;
+  font-weight: bold;
+}

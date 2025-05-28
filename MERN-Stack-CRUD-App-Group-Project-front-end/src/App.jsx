@@ -14,7 +14,6 @@ import PlayerDetail from './components/PlayerDetail/PlayerDetail';
 import PlayerForm from './components/PlayerForm/PlayerForm';
 
 
-
 const App = () => {
   const [teams, setTeams] = useState([]);
   const [players, setPlayers] = useState([]);
@@ -24,26 +23,31 @@ const App = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const data = await teamService.teamIndex();
-        setTeams(data);
-      } catch (err) {
+        const fetchedTeams = await teamService.teamIndex();
+        if (fetchedTeams.err) {
+          throw new Error(fetchedTeams.err);
+        }
+        setTeams(fetchedTeams);
+      }
+      catch (err) {
         console.error(err);
       }
-    };
+    }
+    fetchTeams();
 
     const fetchPlayers = async () => {
       try {
-        const data = await playerService.playerIndex();
-        setPlayers(data);
+        const fetchedPlayers = await playerService.playerIndex();
+        if (fetchedPlayers.err) {
+          throw new Error(fetchedPlayers.err);
+        }
+        setPlayers(fetchedPlayers);
       } catch (err) {
         console.error(err);
       }
-    };
-
-    fetchTeams();
+    }
     fetchPlayers();
-  }
-    , []);
+  }, []);
 
   const handleSelect = (team, player) => {
     setSelected(team, player)
@@ -51,8 +55,10 @@ const App = () => {
   }
 
   const handleFormView = (team, player) => {
-    if (!team?._id && !player?._id) setSelected(null);
-    setIsFormOpen(prev => !prev);
+    console.log('this is handle form view')
+    if (!team?._id && !player?._id)
+      setSelected(null);
+    setIsFormOpen(!isFormOpen);
   }
 
 
@@ -60,16 +66,22 @@ const App = () => {
   const handleAddTeam = async (team) => {
     try {
       const newTeam = await teamService.teamCreate(team);
-      setTeams([...teams, newTeam]);
+      if (newTeam.err) {
+        throw new Error(newTeam.err);
+      }
+      setTeams([newTeam, ...teams]);
     } catch (err) {
       console.error(err);
     }
   }
-
   const handleAddPlayer = async (player) => {
     try {
-      const newPlayer = await playerService.playerCreate(player);
-      setPlayers([...players, newPlayer]);
+      const playerData = { ...player, team: player.team === '' ? null : player.team };
+      const newPlayer = await playerService.playerCreate(playerData);
+      if (newPlayer.err) {
+        throw new Error(newPlayer.err);
+      }
+      setPlayers([newPlayer, ...players]);
     } catch (err) {
       console.error(err);
     }
@@ -77,18 +89,36 @@ const App = () => {
 
 
 
-  const handleUpdateTeam = async (team) => {
+  const handleUpdateTeam = async (formData, teamId) => {
     try {
-      const updatedTeam = await teamService.teamUpdate(team);
-      setTeams(teams.map(t => t._id === updatedTeam._id ? updatedTeam : t));
+      const updatedTeam = await teamService.teamUpdate(formData, teamId);
+      if (updatedTeam.err) {
+        throw new Error(updatedTeam.err);
+      }
+      const updatedTeamList = teams.map((team) => (
+        team._id !== updatedTeam._id ? team : updatedTeam
+      ));
+      setTeams(updatedTeamList);
+      setSelected(updatedTeam);
+      setIsFormOpen(false);
     } catch (err) {
       console.error(err);
     }
   }
-  const handleUpdatePlayer = async (player) => {
+
+
+  const handleUpdatePlayer = async (formData, playerId) => {
     try {
-      const updatedPlayer = await playerService.playerUpdate(player);
-      setPlayers(players.map(p => p._id === updatedPlayer._id ? updatedPlayer : p));
+      const updatedPlayer = await playerService.playerUpdate(formData, playerId);
+      if (updatedPlayer.err) {
+        throw new Error(updatedPlayer.err);
+      }
+      const updatedPlayerList = players.map((player) => (
+        player._id !== updatedPlayer._id ? player : updatedPlayer
+      ));
+      setPlayers(updatedPlayerList);
+      setSelected(updatedPlayer);
+      setIsFormOpen(false);
     } catch (err) {
       console.error(err);
     }
@@ -96,19 +126,29 @@ const App = () => {
 
 
 
-  const handleDeleteTeam = async (id) => {
+  const handleDeleteTeam = async (teamId) => {
     try {
-      await teamService.teamDelete(id);
-      setTeams(teams.filter(t => t._id !== id));
+      await teamService.teamDelete(teamId);
+      setTeams(teams.filter(team => team._id !== teamId));
+      if (selected && selected._id === teamId) {
+        setSelected(null);
+      }
+      setIsFormOpen(false);
     } catch (err) {
       console.error(err);
     }
   }
-  const handleDeletePlayer = async (id) => {
+  const handleDeletePlayer = async (playerId) => {
     try {
-      await playerService.playerDelete(id);
-      setPlayers(players.filter(p => p._id !== id));
-    } catch (err) {
+      await playerService.playerDelete(playerId);
+      setPlayers(players.filter(player => player._id !== playerId));
+      if (selected && selected._id === playerId) {
+        setSelected(null);
+      }
+      setSelected(null);
+      setIsFormOpen(false);
+    }
+    catch (err) {
       console.error(err);
     }
   }
@@ -118,62 +158,71 @@ const App = () => {
     <>
       <NavBar />
       <Routes>
-        <Route path="/" element={<h1>Welcome to the Team Management App</h1>} />
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
-        <Route path="/team-list" element={
-          <TeamList
-            teams={teams}
-            handleAddTeam={handleAddTeam}
-            handleUpdateTeam={handleUpdateTeam}
-            handleDeleteTeam={handleDeleteTeam}
-            handleSelect={handleSelect}
-            handleFormView={handleFormView} />
+        <Route path="/" element={
+          <div className="home">
+            <h1>Welcome to the Goy's Team Management Playoff App</h1>
+            <p>Manage your teams and players for the upcoming Playoffs</p>
+          </div>
         } />
-
-        <Route path="/team-detail" element={
-          <TeamDetail
-            selected={selected}
-            handleUpdateTeam={handleUpdateTeam}
-            handleDeleteTeam={handleDeleteTeam}
-            handleFormView={handleFormView} />
-        } />
-
-        <Route path="/team-form" element={
-          <TeamForm
-            selected={selected}
-            handleAddTeam={handleAddTeam}
-            handleUpdateTeam={handleUpdateTeam}
-            handleFormView={handleFormView}
-            isFormOpen={isFormOpen} />
-        } />
-
-        <Route path="/player-form" element={
-          <PlayerForm
-            selected={selected}
-            handleAddPlayer={handleAddPlayer}
-            handleUpdatePlayer={handleUpdatePlayer}
-            handleFormView={handleFormView} />
-        } />
-
-        <Route path="/player-list" element={
-          <PlayerList
-            players={players}
-            handleAddPlayer={handleAddPlayer}
-            handleUpdatePlayer={handleUpdatePlayer}
-            handleSelect={handleSelect}
-            handleDeletePlayer={handleDeletePlayer}
-            handleFormView={handleFormView} />
-        } />
-
-        <Route path="/player-detail" element={
-          <PlayerDetail
-            selected={selected}
-            handleUpdatePlayer={handleUpdatePlayer}
-            handleDeletePlayer={handleDeletePlayer}
-            handleFormView={handleFormView} />
-        } />
-
+        <Route
+          path="/teams"
+          element={
+            <>
+              <TeamList
+                teams={teams}
+                handleSelect={handleSelect}
+                handleFormView={handleFormView}
+                isFormOpen={isFormOpen}
+              />
+              {isFormOpen ? (
+                <TeamForm
+                  selected={selected}
+                  handleAddTeam={handleAddTeam}
+                  handleUpdateTeam={handleUpdateTeam}
+                />
+              ) : (
+                <TeamDetail
+                  players={players}
+                  selected={selected}
+                  handleSelect={handleSelect}
+                  handleDeleteTeam={handleDeleteTeam}
+                  handleFormView={handleFormView}
+                />
+              )}
+            </>
+          }
+        />
+        <Route
+          path="/players"
+          element={
+            <>
+              <PlayerList
+                players={players}
+                handleSelect={handleSelect}
+                handleFormView={handleFormView}
+                isFormOpen={isFormOpen}
+              />
+              {isFormOpen ? (
+                <PlayerForm
+                  teams={teams}
+                  selected={selected}
+                  handleAddPlayer={handleAddPlayer}
+                  handleUpdatePlayer={handleUpdatePlayer}
+                />
+              ) : (
+                <PlayerDetail
+                  teams={teams}
+                  selected={selected}
+                  handleSelect={handleSelect}
+                  handleDeletePlayer={handleDeletePlayer}
+                  handleFormView={handleFormView}
+                />
+              )}
+            </>
+          }
+        />
       </Routes>
     </>
   )

@@ -1,7 +1,7 @@
 const TeamList = (props) => {
 
     return (
-        <div>
+        <>
             <h1>Team List</h1>
             <div>
                 {props.teams.length === 0 ? (
@@ -9,19 +9,21 @@ const TeamList = (props) => {
                 ) : (
                     <ul>
                         {props.teams.map((team) => (
-                            <li key={team._id}>
-                                <h3>{team.name}</h3>
-                                <p>City: {team.city}</p>
-                                <p>In Playoff: {team.inPlayoff ? 'Yes' : 'No'}</p>
-                                <button onClick={() => props.handleUpdateTeam(team)}>Edit</button>
-                                <button onClick={() => props.handleDeleteTeam(team._id)}>Delete</button>
+                            <li key={team._id}
+                                style={{ cursor: "pointer", color: "white" }}
+                                onClick={() => props.handleSelect(team)}
+                            >
+                                {team.name}
                             </li>
                         ))}
                     </ul>
                 )}
+                <button onClick={props.handleFormView}>
+                    {props.isFormOpen ? "Close Form" : "Add Team"}
+                </button>
             </div>
-        </div>
+        </>
     );
-}
+};
 
 export default TeamList;

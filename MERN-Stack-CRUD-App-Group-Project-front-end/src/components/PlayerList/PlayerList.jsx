@@ -1,28 +1,29 @@
 const PlayerList = (props) => {
 
     return (
-        <div>
+        <>
             <h1>Player List</h1>
             <div>
                 {props.players.length === 0 ? (
-                    <h2>No Players Yet!</h2>
+                    <h2>No Player Yet!</h2>
                 ) : (
                     <ul>
                         {props.players.map((player) => (
-                            <li key={player._id}>
-                                <h3>{player.name}</h3>
-                                <p>Position: {player.position}</p>
-                                <p>Team: {player.team}</p>
-                                <p>Number: {player.number}</p>
-                                <button onClick={() => props.handleUpdatePlayer(player)}>Edit</button>
-                                <button onClick={() => props.handleDeletePlayer(player._id)}>Delete</button>
+                            <li key={player._id}
+                                style={{ cursor: "pointer", color: "white" }}
+                                onClick={() => props.handleSelect(player)}
+                            >
+                                {player.name}
                             </li>
                         ))}
                     </ul>
                 )}
+                <button onClick={props.handleFormView}>
+                    {props.isFormOpen ? "Close Form" : "Add player"}
+                </button>
             </div>
-        </div>
+        </>
     );
-}
+};
 
 export default PlayerList;

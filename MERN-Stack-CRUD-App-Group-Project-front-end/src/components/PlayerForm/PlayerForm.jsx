@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 const initialState = {
-  name: "",
-  position: "",
-  team: "",
+    name: "",
+    position: "",
+    team: "",
 };
 
 const PlayerForm = (props) => {
@@ -29,29 +29,35 @@ const PlayerForm = (props) => {
         <div>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="name">Name:</label>
-                <input 
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
+                <input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
                 />
                 <label htmlFor="position">Position:</label>
                 <input
-                id="position"
-                name="position"
-                value={formData.position}
-                onChange={handleChange}
-                required
+                    id="position"
+                    name="position"
+                    value={formData.position}
+                    onChange={handleChange}
+                    required
                 />
                 <label htmlFor="team">Team:</label>
-                <input
-                id="team"
-                name="team"
-                value={formData.team}
-                onChange={handleChange}
-                required
-                />
+                <select
+                    name="team"
+                    id="team"
+                    onChange={handleChange}
+                    value={formData.team}
+                >
+                    <option value="">Select Team</option>
+                    {props.teams.map((team) => (
+                        <option key={team._id} value={team._id}>
+                            {team.name}
+                        </option>
+                    ))}
+                </select>
                 <button type="submit">
                     {props.selected ? "Update Player" : "Add Player"}
                 </button>

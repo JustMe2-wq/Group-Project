@@ -1,4 +1,3 @@
-// const jwts = require('../middleware/verify-token');
 const Player = require('../models/player');
 const express = require('express');
 const router = express.Router();
@@ -16,7 +15,7 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const foundPlayers = await Player.find({});
+        const foundPlayers = await Player.find({}).populate('team');
         res.json(foundPlayers);
     } catch (err) {
         res.status(500).json({ err: err.message });
@@ -26,7 +25,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:playerId', async (req, res) => {
     try {
-        const foundPlayer = await Player.findById(req.params.playerId);
+        const foundPlayer = await Player.findById(req.params.playerId).populate('team');
         if (!foundPlayer) {
             return res.status(404).json({ err: 'Player not found' });
         }

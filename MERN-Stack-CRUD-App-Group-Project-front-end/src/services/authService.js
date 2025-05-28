@@ -4,7 +4,7 @@ const signUp = async (formData) => {
     try {
         const res = await fetch(`${BASE_URL}/sign-up`, {
             method: "POST",
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
@@ -12,11 +12,11 @@ const signUp = async (formData) => {
 
         const data = await res.json()
 
-        if(data.err) {
+        if (data.err) {
             throw new Error(data.err)
         }
 
-        if(data.token) {
+        if (data.token) {
             localStorage.setItem('token', data.token)
             return JSON.parse(atob(data.token.split('.')[1])).payload
         }

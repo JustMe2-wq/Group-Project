@@ -1,4 +1,3 @@
-// const jwts = require('../middleware/verify-token');
 const Team = require('../models/team');
 const express = require('express');
 const router = express.Router();
@@ -28,8 +27,8 @@ router.get('/:teamId', async (req, res) => {
     try {
         const foundTeam = await Team.findById(req.params.teamId);
         if (!foundTeam) {
-            return res.status(404);
-            throw new Error('Team not found');
+            return res.status(404).json({ err: 'Team not found' });
+            
         }
         res.status(200).json(foundTeam);
     } catch (err) {

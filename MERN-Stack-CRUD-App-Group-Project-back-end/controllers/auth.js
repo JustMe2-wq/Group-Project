@@ -11,8 +11,8 @@ router.post('/sign-up', async (req, res) => {
     try {
         const userInDatabase = await User.findOne({ username: req.body.username })
 
-        if(userInDatabase) {
-            return res.status(409).json({err: 'Username already exists'})
+        if (userInDatabase) {
+            return res.status(409).json({ err: 'Username already exists' })
         }
 
         const user = await User.create({
@@ -20,27 +20,27 @@ router.post('/sign-up', async (req, res) => {
             hashedPassword: bcrypt.hashSync(req.body.password, saltedRounds)
         })
 
-        const payload = { username: user.username, _id: user._id}
+        const payload = { username: user.username, _id: user._id }
 
         const token = jwt.sign({ payload }, process.env.JWT_SECRET)
 
         res.status(201).json({ token })
     } catch (err) {
-        res.status(401).json({err: err.message})
+        res.status(401).json({ err: err.message })
     }
 })
 
 router.post('/sign-in', async (req, res) => {
     try {
         const user = await User.findOne({ username: req.body.username })
-        if(!user) {
-            return res.status(401).json({err: 'invalid credentials'})
+        if (!user) {
+            return res.status(401).json({ err: 'invalid credentials' })
         }
 
         const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.hashedPassword)
 
-        if(!isPasswordCorrect) {
-            return res.status(401).json({err: 'invalid credentials'})
+        if (!isPasswordCorrect) {
+            return res.status(401).json({ err: 'invalid credentials' })
         }
 
         const payload = { username: user.username, _id: user._id }
@@ -49,7 +49,7 @@ router.post('/sign-in', async (req, res) => {
 
         res.status(200).json({ token })
     } catch (err) {
-        res.status(500).json({err: err.message})
+        res.status(500).json({ err: err.message })
     }
 })
 
