@@ -42,7 +42,7 @@ router.get('/:playerId', async (req, res) => {
 
 router.delete('/:playerId', async (req, res) => {
     try {
-        const deletedPlayer = await Player.findByIdAndDelete(req.params.playerId);
+        const deletedPlayer = await Player.findByIdAndDelete(req.params.playerId)
         if (!deletedPlayer) {
             return res.status(404).json({ err: 'Player not found' });
         }

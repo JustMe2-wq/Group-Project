@@ -49,7 +49,6 @@ const teamShow = async (id) => {
   }
 }
 
-
 const teamUpdate = async (team) => {
   try {
     const res = await fetch(`${BASE_URL}/${team._id}`, {

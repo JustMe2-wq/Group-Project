@@ -162,7 +162,7 @@ const App = () => {
         <Route path="/sign-in" element={<SignInForm />} />
         <Route path="/" element={
           <div className="home">
-            <h1>Welcome to the Goy's Team Management Playoff App</h1>
+            <h1>Playoff Team Management</h1>
             <p>Manage your teams and players for the upcoming Playoffs</p>
           </div>
         } />
