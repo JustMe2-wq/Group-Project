@@ -1,5 +1,5 @@
 # Playoff Team Management app
-![Playoff Time](/assets/image/cat.jpg)
+![Playoff Time](assets/image/cat.jpg)
 
 ## Links
 - **GitHub Repository**: [men-stack-project](https://github.com/JustMe2-wq/Group-Project.git)
