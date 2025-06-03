@@ -1,5 +1,5 @@
 # Playoff Team Management app
-![Playoff Time](/MERN-Stack-CRUD-App-Group-Project-front-end/src/assets/image/cat.jpg)
+![Playoff Time](/MERN-Stack-CRUD-App-Group-Project-front-end/src/assets/image/Kyte%202.jpg)
 
 ## Links
 - **GitHub Repository**: [men-stack-project](https://github.com/JustMe2-wq/Group-Project.git)
